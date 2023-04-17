@@ -1,19 +1,28 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import requests
+import time
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+API_URL: str = 'https://api.telegram.org/bot'
+BOT_TOKEN: str = '6042745819:AAFmNd8jhEx3-mkHAyYz5dbTnkhxAyecuoQ'
+TEXT: str = 'Леха пидор!/n Давай дружить'
+MAX_COUNTER: int = 100
+
+offset: int = -2
+counter: int = 0
+chat_id: int
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+while counter < MAX_COUNTER:
 
+    print('attempt =', counter)  #Чтобы видеть в консоли, что код живет
 
+    updates = requests.get(f'{API_URL}{BOT_TOKEN}/getUpdates?offset={offset + 1}').json()
 
+    if updates['result']:
+        for result in updates['result']:
+            offset = result['update_id']
+            chat_id = result['message']['from']['id']
+            requests.get(f'{API_URL}{BOT_TOKEN}/sendMessage?chat_id={chat_id}&text={TEXT}')
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    time.sleep(1)
+    counter += 1
